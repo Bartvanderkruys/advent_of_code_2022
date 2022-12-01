@@ -3,19 +3,22 @@ use std::fs;
 pub fn solve() {
     let contents = fs::read_to_string("src/calorie_counting/input.txt").unwrap();
 
-    let mut highest_cals = 0;
+    let mut calorie_sums: Vec<i32> = vec![];
     let mut current_cals = 0;
 
     for line in contents.lines() {
         if line == "" {
-            if current_cals > highest_cals {
-                highest_cals = current_cals;
-            }
+            calorie_sums.push(current_cals);
             current_cals = 0;
         } else {
             current_cals += line.parse::<i32>().unwrap();
         }
     }
 
-    println!("Most caleries: {}", highest_cals)
+    calorie_sums.sort();
+    calorie_sums.reverse();
+    calorie_sums.truncate(3);
+
+    println!("Elf highscores: {:?}", calorie_sums);
+    println!("Total: {}", calorie_sums.iter().sum::<i32>());
 }
