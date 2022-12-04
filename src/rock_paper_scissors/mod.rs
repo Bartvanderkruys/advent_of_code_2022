@@ -45,14 +45,15 @@ fn calculate_points_for_round(player: i8, opponent: i8) -> i32 {
 pub fn solve() {
     let contents = fs::read_to_string("src/rock_paper_scissors/input.txt").unwrap();
 
-    let mut score: i32 = 0;
+    let score: i32 = contents
+        .lines()
+        .map(|line| {
+            let opponent = get_hand(line.chars().nth(0).unwrap());
+            let player = get_hand(line.chars().nth(2).unwrap());
 
-    for line in contents.lines() {
-        score += calculate_points_for_round(
-            get_hand(line.chars().nth(2).unwrap()),
-            get_hand(line.chars().nth(0).unwrap()),
-        );
-    }
+            calculate_points_for_round(player, opponent)
+        })
+        .sum();
 
     println!("Score: {}", score);
 }
