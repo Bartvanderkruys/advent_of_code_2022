@@ -69,7 +69,7 @@ fn calculate_points_for_round(player: i8, opponent: i8) -> i32 {
 }
 
 pub fn solve() {
-    let contents = fs::read_to_string("src/rock_paper_scissors/input.txt").unwrap();
+    let contents = fs::read_to_string("src/day_2_rock_paper_scissors/input.txt").unwrap();
 
     let score: i32 = contents
         .lines()

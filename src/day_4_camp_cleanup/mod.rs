@@ -46,7 +46,7 @@ fn has_partial_overlap<'a>(line: &'a &str) -> bool {
 }
 
 pub fn solve() {
-    let contents = fs::read_to_string("src/camp_cleanup/input.txt").unwrap();
+    let contents = fs::read_to_string("src/day_4_camp_cleanup/input.txt").unwrap();
 
     println!(
         "Number of complete overlaps: {}",

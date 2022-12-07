@@ -90,7 +90,7 @@ fn execute_instructions_9001(stacks: &mut Vec<Stack>, instructions: &Vec<Instruc
 }
 
 pub fn solve() {
-    let contents = fs::read_to_string("src/supply_stacks/input.txt").unwrap();
+    let contents = fs::read_to_string("src/day_5_supply_stacks/input.txt").unwrap();
 
     let stack_base_line = get_stack_base_line(&contents);
 

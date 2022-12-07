@@ -1,19 +1,23 @@
-#[allow(dead_code)]
+use std::env;
+
 mod day_1_calorie_counting;
 mod day_2_rock_paper_scissors;
 mod day_3_rucksack_reorganization;
 mod day_4_camp_cleanup;
 mod day_5_supply_stacks;
 
-const DAY: i8 = 5;
-
 fn main() {
-    match DAY {
-        1 => day_1_calorie_counting::solve(),
-        2 => day_2_rock_paper_scissors::solve(),
-        3 => day_3_rucksack_reorganization::solve(),
-        4 => day_4_camp_cleanup::solve(),
-        5 => day_5_supply_stacks::solve(),
-        _ => (),
+    let maybe_day_number: Option<String> = env::args().nth(1);
+
+    match maybe_day_number {
+        Some(day_number) => match day_number.parse::<u8>() {
+            Ok(1) => day_1_calorie_counting::solve(),
+            Ok(2) => day_2_rock_paper_scissors::solve(),
+            Ok(3) => day_3_rucksack_reorganization::solve(),
+            Ok(4) => day_4_camp_cleanup::solve(),
+            Ok(5) => day_5_supply_stacks::solve(),
+            _ => println!("Enter a number between 1 and 25."),
+        },
+        None => println!("Enter day number as argument."),
     }
 }

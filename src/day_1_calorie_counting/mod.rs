@@ -1,9 +1,7 @@
 use std::fs;
 
-pub fn solve() {
-    let contents = fs::read_to_string("src/calorie_counting/input.txt").unwrap();
-
-    let mut calorie_sums: Vec<i32> = vec![];
+pub fn part1(contents: &str) -> u32 {
+    let mut calorie_sums: Vec<u32> = vec![];
     let mut current_cals = 0;
 
     for line in contents.lines() {
@@ -11,14 +9,67 @@ pub fn solve() {
             calorie_sums.push(current_cals);
             current_cals = 0;
         } else {
-            current_cals += line.parse::<i32>().unwrap();
+            current_cals += line.parse::<u32>().unwrap();
         }
     }
 
-    calorie_sums.sort();
-    calorie_sums.reverse();
-    calorie_sums.truncate(3);
+    calorie_sums.push(current_cals);
+    *calorie_sums.iter().max().unwrap()
+}
 
-    println!("Elf highscores: {:?}", calorie_sums);
-    println!("Total: {}", calorie_sums.iter().sum::<i32>());
+pub fn part2(contents: &str) -> u32 {
+    let mut calorie_sums: Vec<u32> = vec![];
+    let mut current_cals = 0;
+
+    for line in contents.lines() {
+        if line == "" {
+            calorie_sums.push(current_cals);
+            current_cals = 0;
+        } else {
+            current_cals += line.parse::<u32>().unwrap();
+        }
+    }
+
+    calorie_sums.push(current_cals);
+    calorie_sums.sort();
+    calorie_sums.iter().rev().take(3).sum()
+}
+
+pub fn solve() {
+    let contents = fs::read_to_string("src/day_1_calorie_counting/input.txt").unwrap();
+
+    println!("Part 2: {}", part1(&contents));
+    println!("Part 1: {}", part2(&contents));
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    const INPUT: &str = "1000
+2000
+3000
+
+4000
+
+5000
+6000
+
+7000
+8000
+9000
+
+10000";
+
+    #[test]
+    fn part1_works() {
+        let result = part1(INPUT);
+        assert_eq!(result, 24000);
+    }
+
+    #[test]
+    fn part2_works() {
+        let result = part2(INPUT);
+        assert_eq!(result, 45000);
+    }
 }

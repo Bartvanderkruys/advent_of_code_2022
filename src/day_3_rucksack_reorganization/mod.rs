@@ -50,7 +50,7 @@ fn find_badge(a: &str, b: &str, c: &str) -> char {
 }
 
 pub fn solve() {
-    let contents = fs::read_to_string("src/rucksack_reorganization/input.txt").unwrap();
+    let contents = fs::read_to_string("src/day_3_rucksack_reorganization/input.txt").unwrap();
 
     println!("Sum of priorities: {}", get_priority_sum(&contents));
     println!(
