@@ -69,7 +69,7 @@ fn drain_blocks(
         .collect()
 }
 
-fn execute_instructions(stacks: &mut Vec<Stack>, instructions: &Vec<Instruction>) {
+fn execute_instructions_9000(stacks: &mut Vec<Stack>, instructions: &Vec<Instruction>) {
     for instruction in instructions.iter() {
         let blocks = drain_blocks(stacks, instruction.1 - 1, instruction.0);
 
@@ -79,18 +79,40 @@ fn execute_instructions(stacks: &mut Vec<Stack>, instructions: &Vec<Instruction>
     }
 }
 
+fn execute_instructions_9001(stacks: &mut Vec<Stack>, instructions: &Vec<Instruction>) {
+    for instruction in instructions.iter() {
+        let blocks = drain_blocks(stacks, instruction.1 - 1, instruction.0);
+
+        for block in blocks.iter().rev() {
+            stacks.get_mut(instruction.2 - 1).unwrap().insert(0, *block);
+        }
+    }
+}
+
 pub fn solve() {
     let contents = fs::read_to_string("src/supply_stacks/input.txt").unwrap();
 
     let stack_base_line = get_stack_base_line(&contents);
-    let mut stacks = get_stacks(&contents, stack_base_line);
+
+    let mut stacks_9000 = get_stacks(&contents, stack_base_line);
+    let mut stacks_9001 = stacks_9000.clone();
+
     let instructions = get_instructions(&contents, stack_base_line);
 
-    execute_instructions(&mut stacks, &instructions);
+    execute_instructions_9000(&mut stacks_9000, &instructions);
+    execute_instructions_9001(&mut stacks_9001, &instructions);
 
     println!(
-        "{}",
-        stacks
+        "CrateMover 9000 output: {}",
+        stacks_9000
+            .iter()
+            .map(|stack| { stack.first().unwrap() })
+            .collect::<String>()
+    );
+
+    println!(
+        "CrateMover 9001 output: {}",
+        stacks_9001
             .iter()
             .map(|stack| { stack.first().unwrap() })
             .collect::<String>()
