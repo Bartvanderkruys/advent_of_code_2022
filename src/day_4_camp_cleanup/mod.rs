@@ -45,15 +45,41 @@ fn has_partial_overlap<'a>(line: &'a &str) -> bool {
     false
 }
 
-pub fn solve() {
-    let contents = fs::read_to_string("src/day_4_camp_cleanup/input.txt").unwrap();
+fn part1(input: &str) -> usize {
+    input.lines().filter(has_complete_overlap).count()
+}
 
-    println!(
-        "Number of complete overlaps: {}",
-        contents.lines().filter(has_complete_overlap).count()
-    );
-    println!(
-        "Number of partial overlaps: {}",
-        contents.lines().filter(has_partial_overlap).count()
-    );
+fn part2(input: &str) -> usize {
+    input.lines().filter(has_partial_overlap).count()
+}
+
+pub fn solve() {
+    let input = fs::read_to_string("src/day_4_camp_cleanup/input.txt").unwrap();
+
+    println!("Part 2: {}", part1(&input));
+    println!("Part 1: {}", part2(&input));
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    const INPUT: &str = "2-4,6-8
+2-3,4-5
+5-7,7-9
+2-8,3-7
+6-6,4-6
+2-6,4-8";
+
+    #[test]
+    fn part1_works() {
+        let result = part1(INPUT);
+        assert_eq!(result, 2);
+    }
+
+    #[test]
+    fn part2_works() {
+        let result = part2(INPUT);
+        assert_eq!(result, 4);
+    }
 }
