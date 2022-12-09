@@ -1,10 +1,10 @@
 use std::fs;
 
-pub fn part1(contents: &str) -> u32 {
+pub fn part1(input: &str) -> u32 {
     let mut calorie_sums: Vec<u32> = vec![];
     let mut current_cals = 0;
 
-    for line in contents.lines() {
+    for line in input.lines() {
         if line == "" {
             calorie_sums.push(current_cals);
             current_cals = 0;
@@ -17,11 +17,11 @@ pub fn part1(contents: &str) -> u32 {
     *calorie_sums.iter().max().unwrap()
 }
 
-pub fn part2(contents: &str) -> u32 {
+pub fn part2(input: &str) -> u32 {
     let mut calorie_sums: Vec<u32> = vec![];
     let mut current_cals = 0;
 
-    for line in contents.lines() {
+    for line in input.lines() {
         if line == "" {
             calorie_sums.push(current_cals);
             current_cals = 0;
@@ -36,10 +36,10 @@ pub fn part2(contents: &str) -> u32 {
 }
 
 pub fn solve() {
-    let contents = fs::read_to_string("src/day_1_calorie_counting/input.txt").unwrap();
+    let input = fs::read_to_string("src/day_1_calorie_counting/input.txt").unwrap();
 
-    println!("Part 2: {}", part1(&contents));
-    println!("Part 1: {}", part2(&contents));
+    println!("Part 2: {}", part1(&input));
+    println!("Part 1: {}", part2(&input));
 }
 
 #[cfg(test)]
