@@ -1,29 +1,5 @@
 use std::fs;
 
-fn get_priority_sum(contents: &String) -> u32 {
-    contents
-        .lines()
-        .map(|line| {
-            let (compartment_a, compartment_b) = line.split_at(line.chars().count() / 2);
-            get_priority_of_dupe(find_duplicate_char(compartment_a, compartment_b))
-        })
-        .sum()
-}
-
-fn get_badge_priority_sum(contents: &String) -> u32 {
-    let mut lines = contents.lines();
-
-    let mut badge_priority_sum: u32 = 0;
-
-    while let (Some(a), Some(b), Some(c)) = (lines.next(), lines.next(), lines.next()) {
-        let badge = find_badge(a, b, c);
-
-        badge_priority_sum += get_priority_of_dupe(badge);
-    }
-
-    badge_priority_sum
-}
-
 fn find_duplicate_char(a: &str, b: &str) -> char {
     for char in a.chars() {
         let maybe_index = b.find(char);
@@ -49,12 +25,57 @@ fn find_badge(a: &str, b: &str, c: &str) -> char {
     a.chars().nth(index).unwrap()
 }
 
-pub fn solve() {
-    let contents = fs::read_to_string("src/day_3_rucksack_reorganization/input.txt").unwrap();
+fn part1(input: &str) -> u32 {
+    input
+        .lines()
+        .map(|line| {
+            let (compartment_a, compartment_b) = line.split_at(line.chars().count() / 2);
+            get_priority_of_dupe(find_duplicate_char(compartment_a, compartment_b))
+        })
+        .sum()
+}
 
-    println!("Sum of priorities: {}", get_priority_sum(&contents));
-    println!(
-        "Sum of badge priorities: {}",
-        get_badge_priority_sum(&contents)
-    );
+fn part2(input: &str) -> u32 {
+    let mut lines = input.lines();
+
+    let mut badge_priority_sum: u32 = 0;
+
+    while let (Some(a), Some(b), Some(c)) = (lines.next(), lines.next(), lines.next()) {
+        let badge = find_badge(a, b, c);
+
+        badge_priority_sum += get_priority_of_dupe(badge);
+    }
+
+    badge_priority_sum
+}
+
+pub fn solve() {
+    let input = fs::read_to_string("src/day_3_rucksack_reorganization/input.txt").unwrap();
+
+    println!("Part 2: {}", part1(&input));
+    println!("Part 1: {}", part2(&input));
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    const INPUT: &str = "vJrwpWtwJgWrhcsFMMfFFhFp
+jqHRNqRjqzjGDLGLrsFMfFZSrLrFZsSL
+PmmdzqPrVvPwwTWBwg
+wMqvLMZHhHMvwLHjbvcjnnSBnvTQFn
+ttgJtRGJQctTZtZT
+CrZsJsPPZsGzwwsLwLmpwMDw";
+
+    #[test]
+    fn part1_works() {
+        let result = part1(INPUT);
+        assert_eq!(result, 157);
+    }
+
+    #[test]
+    fn part2_works() {
+        let result = part2(INPUT);
+        assert_eq!(result, 70);
+    }
 }
