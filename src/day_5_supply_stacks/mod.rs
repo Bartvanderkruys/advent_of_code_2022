@@ -3,7 +3,7 @@ use std::fs;
 type Stack = Vec<char>;
 type Instruction = (usize, usize, usize);
 
-fn get_stack_base_line(contents: &String) -> usize {
+fn get_stack_base_line(contents: &str) -> usize {
     contents
         .lines()
         .position(|x| x.chars().nth(1) == Some('1'))
@@ -14,7 +14,7 @@ fn parse_instruction(string: &str) -> usize {
     string.parse::<usize>().unwrap()
 }
 
-fn get_instructions(contents: &String, stack_base_line: usize) -> Vec<Instruction> {
+fn get_instructions(contents: &str, stack_base_line: usize) -> Vec<Instruction> {
     contents
         .lines()
         .skip(stack_base_line + 2)
@@ -30,7 +30,7 @@ fn get_instructions(contents: &String, stack_base_line: usize) -> Vec<Instructio
         .collect()
 }
 
-fn get_stacks(contents: &String, stack_base_line: usize) -> Vec<Stack> {
+fn get_stacks(contents: &str, stack_base_line: usize) -> Vec<Stack> {
     let mut stacks: Vec<Stack> = vec![];
 
     let number_of_stacks = contents
@@ -89,32 +89,62 @@ fn execute_instructions_9001(stacks: &mut Vec<Stack>, instructions: &Vec<Instruc
     }
 }
 
+fn part1(input: &str) -> String {
+    let stack_base_line = get_stack_base_line(input);
+    let mut stacks = get_stacks(input, stack_base_line);
+    let instructions = get_instructions(input, stack_base_line);
+
+    execute_instructions_9000(&mut stacks, &instructions);
+
+    stacks
+        .iter()
+        .map(|stack| stack.first().unwrap())
+        .collect::<String>()
+}
+
+fn part2(input: &str) -> String {
+    let stack_base_line = get_stack_base_line(input);
+    let mut stacks = get_stacks(input, stack_base_line);
+    let instructions = get_instructions(input, stack_base_line);
+
+    execute_instructions_9001(&mut stacks, &instructions);
+
+    stacks
+        .iter()
+        .map(|stack| stack.first().unwrap())
+        .collect::<String>()
+}
+
 pub fn solve() {
-    let contents = fs::read_to_string("src/day_5_supply_stacks/input.txt").unwrap();
+    let input = fs::read_to_string("src/day_5_supply_stacks/input.txt").unwrap();
 
-    let stack_base_line = get_stack_base_line(&contents);
+    println!("Part 2: {}", part1(&input));
+    println!("Part 1: {}", part2(&input));
+}
 
-    let mut stacks_9000 = get_stacks(&contents, stack_base_line);
-    let mut stacks_9001 = stacks_9000.clone();
+#[cfg(test)]
+mod tests {
+    use super::*;
 
-    let instructions = get_instructions(&contents, stack_base_line);
+    const INPUT: &str = "    [D]    
+[N] [C]    
+[Z] [M] [P]
+ 1   2   3 
 
-    execute_instructions_9000(&mut stacks_9000, &instructions);
-    execute_instructions_9001(&mut stacks_9001, &instructions);
+move 1 from 2 to 1
+move 3 from 1 to 3
+move 2 from 2 to 1
+move 1 from 1 to 2";
 
-    println!(
-        "CrateMover 9000 output: {}",
-        stacks_9000
-            .iter()
-            .map(|stack| { stack.first().unwrap() })
-            .collect::<String>()
-    );
+    #[test]
+    fn part1_works() {
+        let result = part1(INPUT);
+        assert_eq!(result, "CMZ");
+    }
 
-    println!(
-        "CrateMover 9001 output: {}",
-        stacks_9001
-            .iter()
-            .map(|stack| { stack.first().unwrap() })
-            .collect::<String>()
-    )
+    #[test]
+    fn part2_works() {
+        let result = part2(INPUT);
+        assert_eq!(result, "MCD");
+    }
 }
