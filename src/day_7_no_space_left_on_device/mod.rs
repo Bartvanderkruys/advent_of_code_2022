@@ -113,19 +113,37 @@ fn construct_file_tree(input: &str) -> Node {
     file_tree
 }
 
-fn part1(input: &str) -> u32 {
+fn get_dir_sizes(input: &str) -> Vec<u32> {
     let mut file_tree = construct_file_tree(input);
     let mut dir_sizes: Vec<u32> = vec![];
 
     file_tree.fill_sizes(&mut dir_sizes);
 
+    dir_sizes
+}
+
+fn part1(input: &str) -> u32 {
+    let dir_sizes = get_dir_sizes(input);
+
     dir_sizes.iter().filter(|x| **x <= 100000).sum()
+}
+
+fn part2(input: &str) -> u32 {
+    let mut dir_sizes = get_dir_sizes(input);
+
+    dir_sizes.sort();
+
+    let unused_space = 70000000 - dir_sizes.last().unwrap();
+    let space_to_free_up = 30000000 - unused_space;
+
+    *dir_sizes.iter().find(|x| **x >= space_to_free_up).unwrap()
 }
 
 pub fn solve() {
     let input = fs::read_to_string("src/day_7_no_space_left_on_device/input.txt").unwrap();
 
     println!("Part 1: {}", part1(&input));
+    println!("Part 2: {}", part2(&input));
 }
 
 #[cfg(test)]
@@ -160,5 +178,11 @@ $ ls
     fn part1_works() {
         let result = part1(INPUT);
         assert_eq!(result, 95437);
+    }
+
+    #[test]
+    fn part2_works() {
+        let result = part2(INPUT);
+        assert_eq!(result, 24933642);
     }
 }
