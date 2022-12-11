@@ -59,7 +59,7 @@ impl TreeGrid {
         visible_trees
     }
 
-    fn get_horizontally_visible_trees(&self) -> Vec<TreePos> {
+    fn count_visible_trees(&self) -> usize {
         let mut visible: Vec<TreePos> = vec![];
 
         for row_index in 1..self.row_count - 1 {
@@ -72,21 +72,30 @@ impl TreeGrid {
                 .for_each(|x| visible.push((row_index, self.row_count - x - 1)));
         }
 
-        visible.into_iter().unique().collect()
+        for column_index in 1..self.column_count - 1 {
+            TreeGrid::get_visible_trees(self.get_column(column_index))
+                .iter()
+                .for_each(|x| visible.push((*x, column_index)));
+
+            TreeGrid::get_visible_trees(self.get_column(column_index).into_iter().rev().collect())
+                .iter()
+                .for_each(|x| visible.push((self.column_count - x - 1, column_index)));
+        }
+
+        dbg!(&visible);
+
+        visible.into_iter().unique().count() + self.count_trees_on_edge()
+    }
+
+    fn count_trees_on_edge(&self) -> usize {
+        (self.row_count + self.column_count) * 2 - 4
     }
 }
 
-pub fn part1(input: &str) -> u32 {
+pub fn part1(input: &str) -> usize {
     let grid = TreeGrid::new(input);
 
-    let horizontally_visible = grid.get_horizontally_visible_trees();
-    let vertically_visible = grid.get_vertically_visible_trees();
-
-    // get unique trees sum
-    // count border trees
-    // add together
-
-    0
+    grid.count_visible_trees()
 }
 
 pub fn solve() {
