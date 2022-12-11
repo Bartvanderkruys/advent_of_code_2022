@@ -7,6 +7,7 @@ mod day_4_camp_cleanup;
 mod day_5_supply_stacks;
 mod day_6_tuning_trouble;
 mod day_7_no_space_left_on_device;
+mod day_8_treetop_tree_house;
 
 fn main() {
     let maybe_day_number: Option<String> = env::args().nth(1);
@@ -20,6 +21,7 @@ fn main() {
             Ok(5) => day_5_supply_stacks::solve(),
             Ok(6) => day_6_tuning_trouble::solve(),
             Ok(7) => day_7_no_space_left_on_device::solve(),
+            Ok(8) => day_8_treetop_tree_house::solve(),
             _ => println!("Enter a number between 1 and 25."),
         },
         None => println!("Enter day number as argument."),
