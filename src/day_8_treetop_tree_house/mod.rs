@@ -59,7 +59,7 @@ impl TreeGrid {
         visible_trees
     }
 
-    fn count_visible_trees(&self) -> usize {
+    fn get_inner_visible_trees(&self) -> Vec<TreePos> {
         let mut visible: Vec<TreePos> = vec![];
 
         for row_index in 1..self.row_count - 1 {
@@ -82,9 +82,11 @@ impl TreeGrid {
                 .for_each(|x| visible.push((self.column_count - x - 1, column_index)));
         }
 
-        dbg!(&visible);
+        visible.into_iter().unique().collect_vec()
+    }
 
-        visible.into_iter().unique().count() + self.count_trees_on_edge()
+    fn count_visible_trees(&self) -> usize {
+        self.get_inner_visible_trees().iter().count() + self.count_trees_on_edge()
     }
 
     fn count_trees_on_edge(&self) -> usize {
@@ -98,10 +100,17 @@ pub fn part1(input: &str) -> usize {
     grid.count_visible_trees()
 }
 
+pub fn part2(input: &str) -> usize {
+    let grid = TreeGrid::new(input);
+
+    grid.count_visible_trees()
+}
+
 pub fn solve() {
     let input = fs::read_to_string("src/day_8_treetop_tree_house/input.txt").unwrap();
 
     println!("Part 1: {}", part1(&input));
+    println!("Part 2: {}", part2(&input));
 }
 
 #[cfg(test)]
@@ -118,5 +127,10 @@ mod tests {
     fn part1_works() {
         let result = part1(INPUT);
         assert_eq!(result, 21);
+    }
+
+    fn part2_works() {
+        let result = part2(INPUT);
+        assert_eq!(result, 8);
     }
 }
