@@ -1,11 +1,37 @@
 use std::fs;
 
-pub fn part1(_: &str) -> u32 {
-    0
+pub fn part1(input: &str) -> i32 {
+    let mut cycle_states: Vec<i32> = vec![];
+    let mut current_state: i32 = 1;
+
+    input
+        .lines()
+        .for_each(|line| match line.chars().next().unwrap() {
+            'a' => {
+                cycle_states.push(current_state);
+                cycle_states.push(current_state);
+                current_state += line[5..].parse::<i32>().unwrap();
+            }
+            'n' => {
+                cycle_states.push(current_state);
+            }
+            _ => panic!("unknown command"),
+        });
+
+    let relevant_cycles = [
+        cycle_states.iter().nth(19).unwrap() * 20,
+        cycle_states.iter().nth(59).unwrap() * 60,
+        cycle_states.iter().nth(99).unwrap() * 100,
+        cycle_states.iter().nth(139).unwrap() * 140,
+        cycle_states.iter().nth(179).unwrap() * 180,
+        cycle_states.iter().nth(219).unwrap() * 220,
+    ];
+
+    relevant_cycles.iter().sum()
 }
 
 pub fn solve() {
-    let input = fs::read_to_string("src/day_10_cathode-ray_tube/input.txt").unwrap();
+    let input = fs::read_to_string("src/day_10_cathode_ray_tube/input.txt").unwrap();
 
     println!("Part 1: {}", part1(&input));
 }
@@ -164,6 +190,6 @@ noop";
     #[test]
     fn part1_works() {
         let result = part1(INPUT);
-        assert_eq!(result, 0);
+        assert_eq!(result, 13140);
     }
 }
