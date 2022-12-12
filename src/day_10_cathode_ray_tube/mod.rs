@@ -1,6 +1,6 @@
 use std::fs;
 
-pub fn part1(input: &str) -> i32 {
+pub fn get_cycles(input: &str) -> Vec<i32> {
     let mut cycle_states: Vec<i32> = vec![];
     let mut current_state: i32 = 1;
 
@@ -18,6 +18,12 @@ pub fn part1(input: &str) -> i32 {
             _ => panic!("unknown command"),
         });
 
+    cycle_states
+}
+
+pub fn part1(input: &str) -> i32 {
+    let cycle_states = get_cycles(input);
+
     let relevant_cycles = [
         cycle_states.iter().nth(19).unwrap() * 20,
         cycle_states.iter().nth(59).unwrap() * 60,
@@ -30,10 +36,29 @@ pub fn part1(input: &str) -> i32 {
     relevant_cycles.iter().sum()
 }
 
+pub fn part2(input: &str) -> String {
+    let cycle_states = get_cycles(input);
+    let mut pixels = String::from("");
+
+    cycle_states.iter().enumerate().for_each(|(i, x)| {
+        if i > 1 && i % 40 == 0 {
+            pixels += "\n";
+        }
+
+        match (x - 1..=x + 1).find(|y| *y as usize == i % 40) {
+            Some(_) => pixels += "#",
+            None => pixels += ".",
+        }
+    });
+
+    pixels
+}
+
 pub fn solve() {
     let input = fs::read_to_string("src/day_10_cathode_ray_tube/input.txt").unwrap();
 
     println!("Part 1: {}", part1(&input));
+    println!("Part 2:\n{}", part2(&input));
 }
 
 #[cfg(test)]
@@ -191,5 +216,19 @@ noop";
     fn part1_works() {
         let result = part1(INPUT);
         assert_eq!(result, 13140);
+    }
+
+    #[test]
+    fn part2_works() {
+        let result = part2(INPUT);
+        assert_eq!(
+            result,
+            "##..##..##..##..##..##..##..##..##..##..
+###...###...###...###...###...###...###.
+####....####....####....####....####....
+#####.....#####.....#####.....#####.....
+######......######......######......####
+#######.......#######.......#######....."
+        );
     }
 }
