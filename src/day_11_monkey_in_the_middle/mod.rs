@@ -8,18 +8,18 @@ enum Operator {
 }
 
 enum Operand {
-    Number(u32),
+    Number(u64),
     Old,
 }
 
 struct Monkey {
-    items: Vec<u32>,
+    items: Vec<u64>,
     operator: Operator,
     operand: Operand,
-    test_division: u32,
+    test_division: u64,
     test_true_monkey: usize,
     test_false_monkey: usize,
-    inspection_count: u32,
+    inspection_count: u64,
 }
 
 impl Monkey {
@@ -32,7 +32,7 @@ impl Monkey {
                 .get(18..)
                 .unwrap()
                 .split(", ")
-                .map(|item| item.parse::<u32>().unwrap())
+                .map(|item| item.parse::<u64>().unwrap())
                 .collect(),
             operator: match input.lines().nth(2).unwrap().chars().nth(23) {
                 Some('*') => Operator::Multiply,
@@ -45,7 +45,7 @@ impl Monkey {
                 .unwrap()
                 .get(25..)
                 .unwrap()
-                .parse::<u32>()
+                .parse::<u64>()
             {
                 Ok(n) => Operand::Number(n),
                 _ => Operand::Old,
@@ -56,7 +56,7 @@ impl Monkey {
                 .unwrap()
                 .get(21..)
                 .unwrap()
-                .parse::<u32>()
+                .parse::<u64>()
                 .unwrap(),
             test_true_monkey: input
                 .lines()
@@ -80,7 +80,7 @@ impl Monkey {
         }
     }
 
-    fn inspect_item(&mut self) -> (u32, usize) {
+    fn inspect_item(&mut self, common_modulo: Option<u64>) -> (u64, usize) {
         self.inspection_count += 1;
 
         let mut item = self.items.remove(0);
@@ -94,7 +94,10 @@ impl Monkey {
             Operator::Multiply => item * operand,
         };
 
-        item = item / 3;
+        item = match common_modulo {
+            Some(n) => item % n,
+            None => item / 3,
+        };
 
         if item % self.test_division == 0 {
             (item, self.test_true_monkey)
@@ -104,7 +107,7 @@ impl Monkey {
     }
 }
 
-pub fn part1(input: &str) -> u32 {
+pub fn part1(input: &str) -> u64 {
     let mut monkeys: Vec<Monkey> = vec![];
 
     input.split("\n\n").collect_vec().iter().for_each(|x| {
@@ -114,14 +117,14 @@ pub fn part1(input: &str) -> u32 {
     for _ in 0..20 {
         for i in 0..monkeys.len() {
             while monkeys.iter().nth(i).unwrap().items.len() > 0 {
-                let (item, target_monkey) = monkeys.iter_mut().nth(i).unwrap().inspect_item();
+                let (item, target_monkey) = monkeys.iter_mut().nth(i).unwrap().inspect_item(None);
 
                 monkeys
                     .iter_mut()
                     .nth(target_monkey)
                     .unwrap()
                     .items
-                    .push(item);
+                    .push(item.into());
             }
         }
     }
@@ -129,7 +132,48 @@ pub fn part1(input: &str) -> u32 {
     let mut inspection_counts = monkeys
         .iter()
         .map(|x| x.inspection_count)
-        .collect::<Vec<u32>>();
+        .collect::<Vec<u64>>();
+
+    inspection_counts.sort_by(|a, b| b.cmp(&a));
+
+    inspection_counts.iter().nth(0).unwrap() * inspection_counts.iter().nth(1).unwrap()
+}
+
+pub fn part2(input: &str) -> u64 {
+    let mut monkeys: Vec<Monkey> = vec![];
+
+    input.split("\n\n").collect_vec().iter().for_each(|x| {
+        monkeys.push(Monkey::new(x));
+    });
+
+    let common_modulo = monkeys
+        .iter()
+        .map(|monkey| monkey.test_division)
+        .reduce(|a, b| a * b);
+
+    for _ in 0..10000 {
+        for i in 0..monkeys.len() {
+            while monkeys.iter().nth(i).unwrap().items.len() > 0 {
+                let (item, target_monkey) = monkeys
+                    .iter_mut()
+                    .nth(i)
+                    .unwrap()
+                    .inspect_item(common_modulo);
+
+                monkeys
+                    .iter_mut()
+                    .nth(target_monkey)
+                    .unwrap()
+                    .items
+                    .push(item.into());
+            }
+        }
+    }
+
+    let mut inspection_counts = monkeys
+        .iter()
+        .map(|x| x.inspection_count)
+        .collect::<Vec<u64>>();
 
     inspection_counts.sort_by(|a, b| b.cmp(&a));
 
@@ -140,6 +184,7 @@ pub fn solve() {
     let input = fs::read_to_string("src/day_11_monkey_in_the_middle/input.txt").unwrap();
 
     println!("Part 1: {}", part1(&input));
+    println!("Part 2: {}", part2(&input));
 }
 
 #[cfg(test)]
@@ -178,5 +223,11 @@ mod tests {
     fn part1_works() {
         let result = part1(INPUT);
         assert_eq!(result, 10605);
+    }
+
+    #[test]
+    fn part2_works() {
+        let result = part2(INPUT);
+        assert_eq!(result, 2713310158);
     }
 }
